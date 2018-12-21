@@ -1,1 +1,1 @@
-export PYTHONPATH="${PLATFORM_APP_DIR}/pgadmin4/web:${PLATFORM_APP_DIR}'
+export PYTHONPATH="${PLATFORM_APP_DIR}/pgadmin4/web:${PLATFORM_APP_DIR}"
