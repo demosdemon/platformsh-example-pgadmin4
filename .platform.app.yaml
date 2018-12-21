@@ -40,7 +40,7 @@ web:
   commands:
     start: |
       set -ex
-      path=$(python -c 'import distutils.sysconfig; print(distutils.sysconfig.get_python_lib("pgadmin4"))')/pgadmin4
+      path=$(realpath .global/lib/python*/site-packages/pgadmin4)
       gunicorn -w 4 -b unix:$SOCKET --pythonpath "$path,." pgAdmin4:app
   locations:
     /:
