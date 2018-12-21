@@ -1,0 +1,1 @@
+export PYTHONPATH="${PLATFORM_APP_DIR}/pgadmin4/web:${PLATFORM_APP_DIR}'
