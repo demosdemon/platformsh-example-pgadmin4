@@ -31,7 +31,7 @@ web:
     socket_family: unix
   # Commands are run once after deployment to start the application process.
   commands:
-    start: gunicorn -w 4 -b unix:$SOCKET pgAdmin4:app
+    start: gunicorn -w 1 --threads ${GUNICORN_THREADS:-25} -b unix:$SOCKET pgAdmin4:app
   locations:
     /:
       passthru: true
