@@ -39,7 +39,8 @@ web:
   # Commands are run once after deployment to start the application process.
   commands:
     start: |
-      pkg=$(python -c 'import distutils.sysconfig; print(distutils.sysconfig.get_python_lib("pgadmin4")')
+      set -ex
+      pkg=$(python -c 'import distutils.sysconfig; print(distutils.sysconfig.get_python_lib("pgadmin4"))')
       gunicorn -w 4 -b unix:$SOCKET --pythonpath "$PKG,." pgAdmin4:app
   locations:
     /:
