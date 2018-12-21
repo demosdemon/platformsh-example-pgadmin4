@@ -13,7 +13,6 @@ type: python:3.7
 variables:
   env:
     PIP_NO_BINARY: psycopg2
-    PGADMIN4_VERSION: "3.6"
 
 # The relationships of the application with services of other applications.
 #
