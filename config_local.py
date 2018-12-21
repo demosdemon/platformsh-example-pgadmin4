@@ -2,6 +2,7 @@
 
 import base64
 import json
+import logging
 import os
 
 WELL_KNOWN_BASE64_JSON = (
@@ -61,7 +62,14 @@ if platform_project:
     TEST_SQLITE_PATH = os.path.join(DATA_DIR, "test_pgadmin4.db")
 
     if not os.path.exists(DATA_DIR):
-        raise RuntimeError("{!r} must be created prior to initializing the application.".format(DATA_DIR))
+        raise RuntimeError(
+            "{!r} must be created prior to initializing the application.".format(
+                DATA_DIR
+            )
+        )
 
 if platform_smtp_host:
     MAIL_SERVER = platform_smtp_host
+
+CONSOLE_LOG_LEVEL = logging.INFO
+FILE_LOG_LEVEL = logging.DEBUG
