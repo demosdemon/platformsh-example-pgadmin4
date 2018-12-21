@@ -18,7 +18,7 @@ nvm use ${NODE_INSTALL_VERSION}
 # upgrade pip using `python -m pip` notation due to a bug where sometimes pip
 # cannot find itself after replacing its main executable
 python -m pip install -U pip setuptools wheel
-pip install -U guinicorn
+pip install -U gunicorn
 
 cd pgadmin4 || exit 1
 pip install -U Sphinx
