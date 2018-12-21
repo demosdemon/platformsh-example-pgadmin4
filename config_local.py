@@ -51,7 +51,7 @@ if platform_project:
     # raises KeyError if not found
     mounts = platform_application["mounts"]
     # raises StopIteration if not found
-    mount = next(mounts).lstrip("/")
+    mount = next(iter(mounts)).lstrip("/")
     DATA_DIR = os.path.join(platform_app_dir, mount)
     LOG_FILE = os.path.join(DATA_DIR, "pgadmin4.log")
     SQLITE_PATH = os.path.join(DATA_DIR, "pgadmin4.db")
