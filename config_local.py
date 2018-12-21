@@ -31,7 +31,7 @@ def env(var_name, default=None, decode=None):
         return default
 
     if decode:
-        value = json.loads(base64.b64decode(value.decode("ascii")))
+        value = json.loads(base64.b64decode(value.encode("ascii")))
 
     return value
 
