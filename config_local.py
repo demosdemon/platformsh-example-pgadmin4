@@ -41,6 +41,7 @@ platform_application = env("PLATFORM_APPLICATION")
 platform_application_name = env("PLATFORM_APPLICATION_NAME")
 platform_project = env("PLATFORM_PROJECT")
 platform_relationships = env("PLATFORM_RELATIONSHIPS")
+platform_smtp_host = env("PLATFORM_SMTP_HOST")
 
 
 # Only set pgAdmin4 settings if we are within a Platform.sh environment
@@ -61,3 +62,6 @@ if platform_project:
 
     if not os.path.exists(DATA_DIR):
         raise RuntimeError("{!r} must be created prior to initializing the application.".format(DATA_DIR))
+
+if platform_smtp_host:
+    MAIL_SERVER = platform_smtp_host
