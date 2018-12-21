@@ -71,5 +71,5 @@ if platform_project:
 if platform_smtp_host:
     MAIL_SERVER = platform_smtp_host
 
-CONSOLE_LOG_LEVEL = logging.INFO
+CONSOLE_LOG_LEVEL = logging.WARNING
 FILE_LOG_LEVEL = logging.DEBUG
