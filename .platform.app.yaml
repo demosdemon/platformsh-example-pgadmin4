@@ -13,16 +13,11 @@ type: python:3.7
 # Variables to parameterize our build steps
 variables:
   env:
+    NVM_VERSION: 0.33.11
+    NVM_NODE_VERSION: 10.14.2
     PYTHONPATH: pgadmin4
     PIP_NO_BINARY: psycopg2
     PGADMIN4_VERSION: '3.6'
-
-# The build-time dependencies of the app.
-dependencies:
-  nodejs:
-    yarn: '*'
-  python3:
-    gunicorn: '*'
 
 
 # The relationships of the application with services of other applications.
@@ -66,12 +61,23 @@ hooks:
   # assembling the codebase.
   build: |
     set -ex
+    unset NPM_CONFIG_PREFIX
+    curl -s -o- https://raw.githubusercontent.com/creationx/nvm/v${NVM_VERSION}/install.sh | sh -ex
+    export NVM_DIR="$HOME/.nvm"
+    [ -e "$NVM_DIR/nvm" ] && . "$NVM_DIR/nvm.sh"
+    nvm current
+    nvm install ${NVM_NODE_VERSION}
     python -m pip install -U pip setuptools wheel
+    pip install -U gunicorn
     cd pgadmin4
     pip install -r requirements.txt
-    pip install Sphinx
+    pip install -U Sphinx
     make -C docs/en_US -f Makefile.sphinx html
     cd web
     yarn install --verbose
     yarn bundle
     python -O -m compileall .
+  deploy: |
+    set -ex
+    unset NPM_CONFIG_PREFIX
+    nvm use ${NVM_NODE_VERSION}
