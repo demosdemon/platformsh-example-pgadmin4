@@ -13,10 +13,14 @@ type: python:3.7
 # Variables to parameterize our build steps
 variables:
   env:
+    PYTHONPATH: pgadmin4
+    PIP_NO_BINARY: psycopg2
     PGADMIN4_VERSION: '3.6'
 
 # The build-time dependencies of the app.
 dependencies:
+  nodejs:
+    yarn: '*'
   python3:
     gunicorn: '*'
 
@@ -62,8 +66,14 @@ hooks:
   # assembling the codebase.
   build: |
     set -ex
-    # upgrade pip using `python -m pip` notation due to bug where pip cannot find itself after replacing its binary
-    python -m pip install -U pip
-    pip install -U setuptools wheel
-    pip install https://ftp.postgresql.org/pub/pgadmin/pgadmin4/v3.6/pip/pgadmin4-${PGADMIN4_VERSION}-py2.py3-none-any.whl
-  deploy: $PLATFORM_APP_DIR/deploy.sh
+    python -m pip install -U pip setuptools wheel
+    pushd pgadmin4
+      pip install -r requirements.txt
+      pip install Sphinx
+      make -C docs/en_US Makefile.sphinx html
+      pushd web
+        yarn install --verbose
+        yarn bundle
+        python -O -m compileall .
+      popd
+    popd

@@ -1,3 +1,0 @@
-export PGADMIN_PATH=$(realpath $PLATFORM_APP_DIR/.global/lib/python*/site-packages/pgadmin4)
-export PYTHONPATH="$PGADMIN_PATH:$PLATFORM_APP_DIR"
-
