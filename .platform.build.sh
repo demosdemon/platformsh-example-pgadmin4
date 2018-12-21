@@ -1,7 +1,5 @@
 #!/bin/sh
 
-set -ex
-
 NVM_INSTALL_VERSION=${NVM_INSTALL_VERSION:-v0.33.11}
 NODE_INSTALL_VERSION=${NODE_INSTALL_VERSION:-v10.14.2}
 
@@ -14,6 +12,8 @@ export NVM_DIR="$HOME/.nvm"
 nvm current
 nvm install ${NODE_INSTALL_VERSION}
 nvm use ${NODE_INSTALL_VERSION}
+
+set -ex
 
 # upgrade pip using `python -m pip` notation due to a bug where sometimes pip
 # cannot find itself after replacing its main executable
