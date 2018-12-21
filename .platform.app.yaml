@@ -67,13 +67,11 @@ hooks:
   build: |
     set -ex
     python -m pip install -U pip setuptools wheel
-    pushd pgadmin4
-      pip install -r requirements.txt
-      pip install Sphinx
-      make -C docs/en_US Makefile.sphinx html
-      pushd web
-        yarn install --verbose
-        yarn bundle
-        python -O -m compileall .
-      popd
-    popd
+    cd pgadmin4
+    pip install -r requirements.txt
+    pip install Sphinx
+    make -C docs/en_US Makefile.sphinx html
+    cd web
+    yarn install --verbose
+    yarn bundle
+    python -O -m compileall .
