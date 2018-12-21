@@ -14,7 +14,7 @@ type: python:3.7
 variables:
   env:
     NVM_VERSION: 0.33.11
-    NVM_NODE_VERSION: 10.14.2
+    NODE_VERSION: 10.14.2
     PYTHONPATH: pgadmin4
     PIP_NO_BINARY: psycopg2
     PGADMIN4_VERSION: '3.6'
@@ -66,7 +66,7 @@ hooks:
     export NVM_DIR="$HOME/.nvm"
     [ -e "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
     nvm current
-    nvm install ${NVM_NODE_VERSION}
+    npm install -g yarn
     python -m pip install -U pip setuptools wheel
     pip install -U gunicorn
     cd pgadmin4
@@ -80,4 +80,4 @@ hooks:
   deploy: |
     set -ex
     unset NPM_CONFIG_PREFIX
-    nvm use ${NVM_NODE_VERSION}
+    nvm current
