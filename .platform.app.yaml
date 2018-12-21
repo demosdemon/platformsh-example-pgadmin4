@@ -54,9 +54,9 @@ disk: 512
 
 # Set a local R/W mount for pgAdmin4's appdata
 mounts:
-  pgadmin-lib:
+  pgadmin-data:
     source: local
-    source_path: pgadmin-lib
+    source_path: pgadmin-data
 
 
 # The hooks executed at various points in the lifecycle of the application
@@ -69,3 +69,4 @@ hooks:
     python -m pip install -U pip
     pip install -U setuptools wheel
     pip install https://ftp.postgresql.org/pub/pgadmin/pgadmin4/v3.6/pip/pgadmin4-${PGADMIN4_VERSION}-py2.py3-none-any.whl
+    mkdir -p pgadmin-data

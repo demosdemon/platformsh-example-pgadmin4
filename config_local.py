@@ -37,6 +37,7 @@ def env(var_name, default=None, decode=None):
 
 
 platform_app_dir = env("PLATFORM_APP_DIR")
+platform_application = env("PLATFORM_APPLICATION")
 platform_application_name = env("PLATFORM_APPLICATION_NAME")
 platform_project = env("PLATFORM_PROJECT")
 platform_relationships = env("PLATFORM_RELATIONSHIPS")
@@ -46,18 +47,17 @@ platform_relationships = env("PLATFORM_RELATIONSHIPS")
 if platform_project:
     # Default pgadmin4 settings write to /var/lib/pgadmin which is not writable
     # in psh containers
-    DATA_DIR = os.path.join(platform_app_dir, "pgadmin-lib")
+
+    # raises KeyError if not found
+    mounts = platform_application["mounts"]
+    # raises StopIteration if not found
+    mount = next(mounts).lstrip("/")
+    DATA_DIR = os.path.join(platform_app_dir, mount)
     LOG_FILE = os.path.join(DATA_DIR, "pgadmin4.log")
     SQLITE_PATH = os.path.join(DATA_DIR, "pgadmin4.db")
-    SESSIONS_DB_PATH = os.path.join(DATA_DIR, "sessions")
+    SESSION_DB_PATH = os.path.join(DATA_DIR, "sessions")
     STORAGE_DIR = os.path.join(DATA_DIR, "storage")
     TEST_SQLITE_PATH = os.path.join(DATA_DIR, "test_pgadmin4.db")
 
     if not os.path.exists(DATA_DIR):
         raise RuntimeError("{!r} must be created prior to initializing the application.".format(DATA_DIR))
-
-    if not os.path.exists(SESSIONS_DB_PATH):
-        os.mkdir(SESSIONS_DB_PATH)
-
-    if not os.path.exists(STORAGE_DIR):
-        os.mkdir(STORAGE_DIR)
