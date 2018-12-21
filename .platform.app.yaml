@@ -56,24 +56,4 @@ mounts:
 hooks:
   # The build hook runs before the application is deployed, and is useful for
   # assembling the codebase.
-  build: |
-    set -ex
-    unset NPM_CONFIG_PREFIX
-    curl -s -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | sh
-    export NVM_DIR="$HOME/.nvm"
-    [ -e "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
-    nvm current
-    nvm install v10.14.2
-    nvm use v10.14.2
-    npm install -g yarn
-    python -m pip install -U pip setuptools wheel
-    pip install -U gunicorn
-    cd pgadmin4
-    pip install -r requirements.txt
-    pip install -U Sphinx
-    make -C docs/en_US -f Makefile.sphinx html
-    cd web
-    yarn install
-    yarn bundle
-    rm -r node_modules "$HOME/.nvm"
-    python -O -m compileall .
+  build: .platform.build.sh
