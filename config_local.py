@@ -41,6 +41,7 @@ platform_application_name = env("PLATFORM_APPLICATION_NAME")
 platform_project = env("PLATFORM_PROJECT")
 platform_relationships = env("PLATFORM_RELATIONSHIPS")
 
+
 # Only set pgAdmin4 settings if we are within a Platform.sh environment
 if platform_project:
     # Default pgadmin4 settings write to /var/lib/pgadmin which is not writable
@@ -51,3 +52,12 @@ if platform_project:
     SESSIONS_DB_PATH = os.path.join(DATA_DIR, "sessions")
     STORAGE_DIR = os.path.join(DATA_DIR, "storage")
     TEST_SQLITE_PATH = os.path.join(DATA_DIR, "test_pgadmin4.db")
+
+    if not os.path.exists(DATA_DIR):
+        raise RuntimeError("{!r} must be created prior to initializing the application.".format(DATA_DIR))
+
+    if not os.path.exists(SESSIONS_DB_PATH):
+        os.mkdir(SESSIONS_DB_PATH)
+
+    if not os.path.exists(STORAGE_DIR):
+        os.mkdir(STORAGE_DIR)
