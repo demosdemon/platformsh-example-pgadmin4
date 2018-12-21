@@ -9,4 +9,3 @@
 pgdata:
   type: postgresql:9.6
   disk: 1024
-
