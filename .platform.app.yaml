@@ -56,4 +56,4 @@ mounts:
 hooks:
   # The build hook runs before the application is deployed, and is useful for
   # assembling the codebase.
-  build: build.sh
+  build: ./.platform.build.sh
