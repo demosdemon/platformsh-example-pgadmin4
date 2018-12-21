@@ -17,7 +17,8 @@ variables:
 
 # The build-time dependencies of the app.
 dependencies:
-  python3: {}
+  python3:
+    gunicorn: '*'
 
 
 # The relationships of the application with services of other applications.
