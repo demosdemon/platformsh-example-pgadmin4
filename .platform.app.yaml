@@ -70,7 +70,7 @@ hooks:
     cd pgadmin4
     pip install -r requirements.txt
     pip install Sphinx
-    make -C docs/en_US Makefile.sphinx html
+    make -C docs/en_US -f Makefile.sphinx html
     cd web
     yarn install --verbose
     yarn bundle
