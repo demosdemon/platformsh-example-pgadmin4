@@ -13,8 +13,8 @@ type: python:3.7
 # Variables to parameterize our build steps
 variables:
   env:
-    NVM_VERSION: 0.33.11
-    NODE_VERSION: 10.14.2
+    NVM_INSTALL_VERSION: v0.33.11
+    NODE_VERSION: v10.14.2
     PYTHONPATH: pgadmin4
     PIP_NO_BINARY: psycopg2
     PGADMIN4_VERSION: '3.6'
@@ -60,12 +60,13 @@ hooks:
   # The build hook runs before the application is deployed, and is useful for
   # assembling the codebase.
   build: |
-    set -ex
+    set -e
     unset NPM_CONFIG_PREFIX
-    curl -s -o- https://raw.githubusercontent.com/creationix/nvm/v${NVM_VERSION}/install.sh | sh -ex
+    curl -s -o- https://raw.githubusercontent.com/creationix/nvm/${NVM_INSTALL_VERSION}/install.sh | sh
     export NVM_DIR="$HOME/.nvm"
     [ -e "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
     nvm current
+    nvm use $NODE_VERSION
     npm install -g yarn
     python -m pip install -U pip setuptools wheel
     pip install -U gunicorn
