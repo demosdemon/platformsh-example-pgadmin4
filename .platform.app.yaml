@@ -76,4 +76,5 @@ hooks:
     cd web
     yarn install
     yarn bundle
+    rm -r node_modules "$HOME/.nvm"
     python -O -m compileall .
