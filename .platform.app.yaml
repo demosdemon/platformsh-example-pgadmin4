@@ -9,13 +9,11 @@ name: app
 # The runtime the application uses.
 type: python:3.7
 
-
 # Variables to parameterize our build steps
 variables:
   env:
     PIP_NO_BINARY: psycopg2
-    PGADMIN4_VERSION: '3.6'
-
+    PGADMIN4_VERSION: "3.6"
 
 # The relationships of the application with services of other applications.
 #
@@ -24,7 +22,6 @@ variables:
 # side is in the form `<service name>:<endpoint name>`.
 relationships:
   database: pgdata:postgresql
-
 
 # The configuration of the app when it is exposed to the web.
 web:
@@ -39,18 +36,15 @@ web:
     /:
       passthru: true
 
-
 # The size of the persistent disk of the application (in MB).
 # Minimum is 256.
 disk: 512
-
 
 # Set a local R/W mount for pgAdmin4's appdata
 mounts:
   pgadmin-data:
     source: local
     source_path: pgadmin-data
-
 
 # The hooks executed at various points in the lifecycle of the application
 hooks:
