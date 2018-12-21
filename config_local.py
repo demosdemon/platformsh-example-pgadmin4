@@ -73,3 +73,4 @@ if platform_smtp_host:
 
 CONSOLE_LOG_LEVEL = logging.WARNING
 FILE_LOG_LEVEL = logging.DEBUG
+THREADED_MODE = False
