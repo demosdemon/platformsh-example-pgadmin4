@@ -14,7 +14,6 @@ type: python:3.7
 variables:
   env:
     PGADMIN4_VERSION: '3.6'
-    PGADMIN_DATA: ./pgadmin-lib
 
 # The build-time dependencies of the app.
 dependencies:
@@ -52,9 +51,9 @@ disk: 512
 
 # Set a local R/W mount for pgAdmin4's appdata
 mounts:
-  pgadmin-lib:
+  pgadmin-data:
     source: local
-    source_path: pgadmin-lib
+    source_path: pgadmin-data
 
 
 # The hooks executed at various points in the lifecycle of the application
