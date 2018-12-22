@@ -21,6 +21,7 @@ variables:
 # side is in the form `<service name>:<endpoint name>`.
 relationships:
   database: pgdata:postgresql
+  postgresql: postgresql:postgresql
 
 # The configuration of the app when it is exposed to the web.
 web:
