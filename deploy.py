@@ -10,6 +10,8 @@ from pgadmin.setup import db_upgrade
 from pgadmin.utils.crypto import encrypt
 from psh import env
 
+DISCOVERY_ID = "platformsh"
+
 
 def setup_db():
     app = create_app()
@@ -106,6 +108,7 @@ def add_relationships():
                 server.name = name
                 server.servergroup_id = group_id
                 server.user_id = user_id
+                server.discovery_id = DISCOVERY_ID
                 print(
                     "Created server %s in group %s for user id %d"
                     % (name, group, user_id)
