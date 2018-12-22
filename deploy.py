@@ -54,7 +54,7 @@ def get_relationships():
                     "group": group,
                     "port": node["port"],
                     "username": node["username"],
-                    "passfile": node["passfile"],
+                    "passfile": node["password"],
                     "ssl_mode": "prefer",
                     "maintenance_db": "postgres",
                 }
