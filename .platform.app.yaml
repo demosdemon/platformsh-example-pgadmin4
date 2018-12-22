@@ -50,3 +50,4 @@ hooks:
   # The build hook runs before the application is deployed, and is useful for
   # assembling the codebase.
   build: $PLATFORM_APP_DIR/.platform.build.sh
+  deploy: python $PLATFORM_APP_DIR/deploy.py
