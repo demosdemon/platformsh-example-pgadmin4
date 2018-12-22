@@ -54,13 +54,13 @@ def setup_db():
 
 def get_relationships():
     relationships = env("PLATFORM_RELATIONSHIPS")
-    for group, nodes in relationships.items():
+    for name, nodes in relationships.items():
         for node in nodes:
             if node["scheme"] == "pgsql":
                 yield {
-                    "name": node["cluster"],
+                    "name": "{}:{}".format(name, node["service"]),
                     "host": node["host"],
-                    "group": group,
+                    "group": node["cluster"],
                     "port": node["port"],
                     "username": node["username"],
                     "password": node["password"],
@@ -70,13 +70,13 @@ def get_relationships():
                 }
 
 
-def get_or_create_group_id(name, user_id):
-    group = ServerGroup.query.filter_by(user_id=user_id, name=name).first()
+def get_or_create_group_id(name, user):
+    group = ServerGroup.query.filter_by(user_id=user.id, name=name).first()
     if group is None:
         group = ServerGroup()
         group.name = name
-        group.user_id = user_id
-        print("Created server group %s for user id %d" % (name, user_id))
+        group.user_id = user.id
+        print("Created server group %r for user %r" % (name, user.email))
         db.session.add(group)
 
         commit("Error creating server group {}".format(name), "Successfully saved.")
@@ -88,7 +88,7 @@ def create_or_update_server(user, server_dict):
     group = server_dict.pop("group")
     name = server_dict.pop("name")
     password = server_dict.pop("password")
-    group_id = get_or_create_group_id(group, user.id)
+    group_id = get_or_create_group_id(group, user)
 
     base = {"user_id": user.id, "servergroup_id": group_id, "name": name}
     server = Server.query.filter_by(**base).first()
