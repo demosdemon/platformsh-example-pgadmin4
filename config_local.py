@@ -42,3 +42,6 @@ FILE_LOG_LEVEL = logging.DEBUG
 
 # Disable version checking
 UPGRADE_CHECK_ENABLED = True
+
+# Disable ssh tunneling
+SUPPORT_SSH_TUNNEL = False
