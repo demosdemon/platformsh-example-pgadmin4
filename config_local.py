@@ -56,12 +56,12 @@ def platform_settings():
     session_db_path = os.path.join(data_dir, "sessions")
 
     # storage_dir is where pgAdmin4 stores intermeidate storage for queries
-    storage_dir = os.path.dir(data_dir, "storage")
+    storage_dir = os.path.join(data_dir, "storage")
 
     # test_sqlite_path is where pgAdmin4 stores its test database when running
     # unit tests. It's not necessary to test this value, but we're being
     # explicit.
-    test_sqlite_path = os.path.dir(data_dir, "test_pgadmin4.db")
+    test_sqlite_path = os.path.join(data_dir, "test_pgadmin4.db")
 
     # assert that the data_dir was created during build, it is most likely too
     # late for use to create it now
