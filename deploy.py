@@ -54,13 +54,13 @@ def setup_db():
 
 def get_relationships():
     relationships = env("PLATFORM_RELATIONSHIPS")
-    for group, nodes in relationships.items():
+    for name, nodes in relationships.items():
         for node in nodes:
             if node["scheme"] == "pgsql":
                 yield {
-                    "name": node["cluster"],
+                    "name": "{}:{}".format(name, node["service"]),
                     "host": node["host"],
-                    "group": group,
+                    "group": node["cluster"],
                     "port": node["port"],
                     "username": node["username"],
                     "password": node["password"],
