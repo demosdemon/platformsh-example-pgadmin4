@@ -49,75 +49,69 @@ def get_relationships():
         for node in nodes:
             if node["scheme"] == "pgsql":
                 yield {
-                    "Name": node["cluster"],
-                    "Host": node["host"],
-                    "Group": group,
-                    "Port": node["port"],
-                    "Username": node["username"],
-                    "Passfile": mkpassfile(node["password"]),
-                    "SSLMode": "prefer",
-                    "MaintenanceDB": "postgres",
-                    "Role": node["path"],
+                    "name": node["cluster"],
+                    "host": node["host"],
+                    "group": group,
+                    "port": node["port"],
+                    "username": node["username"],
+                    "passfile": node["passfile"],
+                    "ssl_mode": "prefer",
+                    "maintenance_db": "postgres",
                 }
+
+
+def get_or_create_group_id(name, user_id):
+    group = ServerGroup.query.filter_by(user_id=user_id, name=name).first()
+    if group is None:
+        group = ServerGroup()
+        group.name = name
+        group.user_id = user_id
+        db.session.add(group)
+
+        try:
+            db.session.commit()
+        except Exception:
+            raise RuntimeError("Error creating server group %s" % (name,))
+
+    return group.id
 
 
 def add_relationships():
     app = create_app()
 
     with app.app_context():
-        userid = env("PGADMIN_SETUP_EMAIL")
-        if not userid:
+        email = env("PGADMIN_SETUP_EMAIL")
+        if not email:
             raise RuntimeError("Expected $PGADMIN_SETUP_EMAIL environment variable.")
 
-        user = User.query.filter_by(email=userid).first()
+        user = User.query.filter_by(email=email).first()
         if user is None:
             raise RuntimeError(
-                "The specified user ID ({}) could not be found.".format(userid)
+                "The specified user ID ({}) could not be found.".format(email)
             )
         user_id = user.id
 
         rels = list(get_relationships())
-        groups = ServerGroup.query.all()
 
         for rel in rels:
-            group_id = -1
-            for g in groups:
-                if g.name == rel["Group"]:
-                    group_id = g.id
-                    break
+            group = rel.pop("group")
+            name = rel.pop("name")
+            group_id = get_or_create_group_id(group, user_id)
 
-            if group_id == -1:
-                new_group = ServerGroup()
-                new_group.name = rel["Group"]
-                new_group.user_id = user_id
-                db.session.add(new_group)
+            server = Server.query.filter_by(group_id=group_id, name=name).first()
+            if server is None:
+                server = Server()
+                server.name = name
+                server.group_id = group_id
+                db.session.add(server)
 
-                try:
-                    db.session.commit()
-                except Exception:
-                    raise RuntimeError("Error creating server group.")
-
-                group_id = new_group.id
-                groups = ServerGroup.query.all()
-
-            new_server = Server()
-            new_server.name = rel["Name"]
-            new_server.servergroup_id = group_id
-            new_server.user_id = user_id
-            new_server.host = rel["Host"]
-            new_server.port = rel["Port"]
-            new_server.maintenance_db = rel["MaintenanceDB"]
-            new_server.username = rel["Username"]
-            new_server.passfile = rel["Passfile"]
-            new_server.role = rel["Role"]
-            new_server.ssl_mode = rel["SSLMode"]
-
-            db.session.add(new_server)
+            for key, value in rel.items():
+                setattr(server, key, value)
 
             try:
                 db.session.commit()
             except Exception:
-                raise RuntimeError("Error creating server.")
+                raise RuntimeError("Error saving server %s - %s" % (group, name))
 
 
 if __name__ == "__main__":
