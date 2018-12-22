@@ -24,26 +24,28 @@ def commit(errmsg=None, success=None):
             print(success)
 
 
+def init_db(app):
+    print("Initializing database for the first time.")
+    assert env("PLATFORM_SETUP_EMAIL")
+    if env("PLATFORM_SETUP_PASSWORD") is None:
+        pw = base64.b64encode(os.urandom(42)).decode("ascii")
+        print("Generated password for initial user: {}".format(pw))
+        os.environ["PLATFORM_SETUP_PASSWORD"] = pw
+    db_upgrade(app)
+
+
 def setup_db():
     app = create_app()
 
     with app.app_context():
         if not os.path.exists(SQLITE_PATH):
-            print("Initializing database for the first time.")
-            assert env("PLATFORM_SETUP_EMAIL")
-            if env("PLATFORM_SETUP_PASSWORD") is None:
-                pw = base64.b64encode(os.urandom(42)).decode("ascii")
-                print("Generated password for initial user: {}".format(pw))
-                os.environ["PLATFORM_SETUP_PASSWORD"] = pw
-            db_upgrade(app)
+            init_db(app)
         else:
             version = Version.query.filter_by(name="ConfigDB").first()
             if version is None:
-                print(
-                    "Error fetching database version. Removing database and reinitializing."
-                )
+                print("Error fetching database version. Removing database.")
                 os.unlink(SQLITE_PATH)
-                db_upgrade(app)
+                init_db(app)
             else:
                 schema_version = version.value
 
