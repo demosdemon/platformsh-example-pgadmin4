@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import base64
 import os
 
 from config import SQLITE_PATH
@@ -29,6 +30,11 @@ def setup_db():
     with app.app_context():
         if not os.path.exists(SQLITE_PATH):
             print("Initializing database for the first time.")
+            assert env("PLATFORM_SETUP_EMAIL")
+            if env("PLATFORM_SETUP_PASSWORD") is None:
+                pw = base64.b64encode(os.urandom(42)).decode("ascii")
+                print("Generated password for initial user: {}".format(pw))
+                os.environ["PLATFORM_SETUP_PASSWORD"] = pw
             db_upgrade(app)
         else:
             version = Version.query.filter_by(name="ConfigDB").first()
