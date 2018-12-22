@@ -26,11 +26,11 @@ def commit(errmsg=None, success=None):
 
 def init_db(app):
     print("Initializing database for the first time.")
-    assert env("PLATFORM_SETUP_EMAIL")
-    if env("PLATFORM_SETUP_PASSWORD") is None:
+    assert env("PGADMIN_SETUP_EMAIL")
+    if env("PGADMIN_SETUP_PASSWORD") is None:
         pw = base64.b64encode(os.urandom(42)).decode("ascii")
         print("Generated password for initial user: {}".format(pw))
-        os.environ["PLATFORM_SETUP_PASSWORD"] = pw
+        os.environ["PGADMIN_SETUP_PASSWORD"] = pw
     db_upgrade(app)
 
 
