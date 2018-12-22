@@ -1,13 +1,23 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import hashlib
 import os
 
-from config import SQLITE_PATH
+from config import DATA_DIR, SQLITE_PATH
 from pgadmin import create_app
 from pgadmin.model import SCHEMA_VERSION, Server, ServerGroup, User, Version, db
 from pgadmin.setup import db_upgrade
 from psh import env
+
+
+def mkpassfile(password):
+    key = hashlib.sha256(password.encode("utf-8")).hexdigest()
+    passfile = os.path.join(DATA_DIR, "{}.pass".format(key))
+    with open(passfile, "w") as fp:
+        fp.write(password)
+
+    return passfile
 
 
 def setup_db():
@@ -44,7 +54,7 @@ def get_relationships():
                     "Group": group,
                     "Port": node["port"],
                     "Username": node["username"],
-                    "Password": node["password"],
+                    "Passfile": mkpassfile(node["password"]),
                     "SSLMode": "prefer",
                     "MaintenanceDB": "postgres",
                     "Role": node["path"],
@@ -98,7 +108,7 @@ def add_relationships():
             new_server.port = rel["Port"]
             new_server.maintenance_db = rel["MaintenanceDB"]
             new_server.username = rel["Username"]
-            new_server.password = rel["Password"]
+            new_server.passfile = rel["Passfile"]
             new_server.role = rel["Role"]
             new_server.ssl_mode = rel["SSLMode"]
 
