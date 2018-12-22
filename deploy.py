@@ -13,6 +13,16 @@ from psh import env
 DISCOVERY_ID = "platformsh"
 
 
+def commit(errmsg=None, success=None):
+    try:
+        db.session.commit()
+    except Exception as e:
+        raise RuntimeError(errmsg if errmsg else str(e))
+    else:
+        if success:
+            print(success)
+
+
 def setup_db():
     app = create_app()
 
@@ -39,7 +49,7 @@ def setup_db():
                     version = Version.query.filter_by(name="ConfigDB").first()
                     version.value = SCHEMA_VERSION
                     print("Saving database schema version.")
-                    db.session.commit()
+                    commit("Error saving database schema version")
 
 
 def get_relationships():
@@ -69,14 +79,73 @@ def get_or_create_group_id(name, user_id):
         print("Created server group %s for user id %d" % (name, user_id))
         db.session.add(group)
 
-        try:
-            db.session.commit()
-        except Exception:
-            raise RuntimeError("Error creating server group %s" % (name,))
-        else:
-            print("Successfully saved.")
+        commit("Error creating server group {}".format(name), "Successfully saved.")
 
     return group.id
+
+
+def create_or_update_server(user, server_dict):
+    group = server_dict.pop("group")
+    name = server_dict.pop("name")
+    password = server_dict.pop("password")
+    group_id = get_or_create_group_id(group, user.id)
+
+    server = Server.query.filter_by(
+        user_id=user.id, servergroup_id=group_id, name=name
+    ).first()
+    if server is None:
+        server = Server(
+            name=name,
+            servergroup_id=group_id,
+            user_id=user.id,
+            discovery_id=DISCOVERY_ID,
+        )
+        print(
+            "Created server {!r} in group {!r} for user {!r}".format(
+                name, group, user.email
+            )
+        )
+        db.session.add(server)
+
+    server.password = encrypt(password, user.password)
+
+    for attr, value in server_dict.items():
+        setattr(server, attr, value)
+
+    commit(
+        "Error updating server {} in group {}".format(name, group),
+        "Successfully saved.",
+    )
+    return server
+
+
+def prune_old_servers(user, discovered):
+    existing = Server.query.filter_by(user_id=user.id, discovery_id=DISCOVERY_ID).all()
+    pruned_servers = []
+    pruned_groups = []
+    for server in existing:
+        if server in discovered:
+            continue
+
+        group = ServerGroup.query.filter_by(id=server.servergroup_id).first()
+        print(
+            "Removing {!r} from {!r} as it was not in the environment.".format(
+                server.name, group.name
+            )
+        )
+
+        db.session.delete(server)
+        commit("Error removing server.", "Successfully saved.")
+        pruned_servers.append(server)
+
+        servers = Server.query.filter_by(servergroup_id=group.id).count()
+        if servers == 0 and group.name != "Servers":  # Servers is a protected group
+            print("Removing group {!r} because it is empty.".format(group.name))
+            db.session.delete(group)
+            commit("Error removing group.", "Successfully saved.")
+            pruned_groups.append(group)
+
+    return pruned_servers, pruned_groups
 
 
 def add_relationships():
@@ -90,45 +159,17 @@ def add_relationships():
         user = User.query.filter_by(email=email).first()
         if user is None:
             raise RuntimeError(
-                "The specified user ID ({}) could not be found.".format(email)
+                "The specified user {!r} could not be found.".format(email)
             )
-        user_id = user.id
 
         rels = list(get_relationships())
+        discovered = []
 
         for rel in rels:
-            group = rel.pop("group")
-            name = rel.pop("name")
-            password = rel.pop("password")
-            group_id = get_or_create_group_id(group, user_id)
+            server = create_or_update_server(user, rel)
+            discovered.append(server)
 
-            server = Server.query.filter_by(servergroup_id=group_id, name=name).first()
-            if server is None:
-                server = Server()
-                server.name = name
-                server.servergroup_id = group_id
-                server.user_id = user_id
-                server.discovery_id = DISCOVERY_ID
-                print(
-                    "Created server %s in group %s for user id %d"
-                    % (name, group, user_id)
-                )
-                db.session.add(server)
-
-            for key, value in rel.items():
-                setattr(server, key, value)
-
-            server.password = encrypt(password, user.password)
-
-            try:
-                db.session.commit()
-            except Exception:
-                raise RuntimeError("Error saving server %s - %s" % (group, name))
-            else:
-                print(
-                    "Successfully saved server %s in group %s for user id %d"
-                    % (name, group, user_id)
-                )
+        prune_old_servers(user, discovered)
 
 
 if __name__ == "__main__":
