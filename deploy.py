@@ -1,23 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import hashlib
 import os
 
-from config import DATA_DIR, SQLITE_PATH
+from config import SQLITE_PATH
 from pgadmin import create_app
 from pgadmin.model import SCHEMA_VERSION, Server, ServerGroup, User, Version, db
 from pgadmin.setup import db_upgrade
+from pgadmin.utils.crypto import encrypt
 from psh import env
-
-
-def mkpassfile(password):
-    key = hashlib.sha256(password.encode("utf-8")).hexdigest()
-    passfile = os.path.join(DATA_DIR, "{}.pass".format(key))
-    with open(passfile, "w") as fp:
-        fp.write(password)
-
-    return passfile
 
 
 def setup_db():
@@ -60,7 +51,8 @@ def get_relationships():
                     "group": group,
                     "port": node["port"],
                     "username": node["username"],
-                    "passfile": mkpassfile(node["password"]),
+                    "password": node["password"],
+                    "passfile": None,
                     "ssl_mode": "prefer",
                     "maintenance_db": "postgres",
                 }
@@ -105,6 +97,7 @@ def add_relationships():
         for rel in rels:
             group = rel.pop("group")
             name = rel.pop("name")
+            password = rel.pop("password")
             group_id = get_or_create_group_id(group, user_id)
 
             server = Server.query.filter_by(servergroup_id=group_id, name=name).first()
@@ -121,6 +114,8 @@ def add_relationships():
 
             for key, value in rel.items():
                 setattr(server, key, value)
+
+            server.password = encrypt(password, user.password)
 
             try:
                 db.session.commit()
