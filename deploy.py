@@ -30,7 +30,9 @@ def setup_db():
         else:
             version = Version.query.filter_by(name="ConfigDB").first()
             if version is None:
-                print("Error fetching database version. Removing database and reinitializing.")
+                print(
+                    "Error fetching database version. Removing database and reinitializing."
+                )
                 os.unlink(SQLITE_PATH)
                 db_upgrade(app)
             else:
@@ -77,6 +79,8 @@ def get_or_create_group_id(name, user_id):
             db.session.commit()
         except Exception:
             raise RuntimeError("Error creating server group %s" % (name,))
+        else:
+            print("Successfully saved.")
 
     return group.id
 
@@ -109,7 +113,10 @@ def add_relationships():
                 server.name = name
                 server.group_id = group_id
                 server.user_id = user_id
-                print("Created server %s in group %s for user id %d" % (name, group, user_id))
+                print(
+                    "Created server %s in group %s for user id %d"
+                    % (name, group, user_id)
+                )
                 db.session.add(server)
 
             for key, value in rel.items():
@@ -119,6 +126,11 @@ def add_relationships():
                 db.session.commit()
             except Exception:
                 raise RuntimeError("Error saving server %s - %s" % (group, name))
+            else:
+                print(
+                    "Successfully saved server %s in group %s for user id %d"
+                    % (name, group, user_id)
+                )
 
 
 if __name__ == "__main__":
