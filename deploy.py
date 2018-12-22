@@ -107,11 +107,11 @@ def add_relationships():
             name = rel.pop("name")
             group_id = get_or_create_group_id(group, user_id)
 
-            server = Server.query.filter_by(group_id=group_id, name=name).first()
+            server = Server.query.filter_by(servergroup_id=group_id, name=name).first()
             if server is None:
                 server = Server()
                 server.name = name
-                server.group_id = group_id
+                server.servergroup_id = group_id
                 server.user_id = user_id
                 print(
                     "Created server %s in group %s for user id %d"
