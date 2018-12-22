@@ -17,7 +17,7 @@ set -ex
 
 # upgrade pip using `python -m pip` notation due to a bug where sometimes pip
 # cannot find itself after replacing its main executable
-python -m pip install -U pip setuptools wheel
+python -m pip install -U pip setuptools wheel ipython
 pip install -U gunicorn
 
 cd pgadmin4 || exit 1
