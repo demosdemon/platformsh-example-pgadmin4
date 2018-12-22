@@ -25,21 +25,25 @@ def setup_db():
 
     with app.app_context():
         if not os.path.exists(SQLITE_PATH):
+            print("Initializing database for the first time.")
             db_upgrade(app)
         else:
             version = Version.query.filter_by(name="ConfigDB").first()
             if version is None:
+                print("Error fetching database version. Removing database and reinitializing.")
                 os.unlink(SQLITE_PATH)
                 db_upgrade(app)
             else:
                 schema_version = version.value
 
                 if SCHEMA_VERSION >= schema_version:
+                    print("Upgrading database schema.")
                     db_upgrade(app)
 
                 if SCHEMA_VERSION > schema_version:
                     version = Version.query.filter_by(name="ConfigDB").first()
                     version.value = SCHEMA_VERSION
+                    print("Saving database schema version.")
                     db.session.commit()
 
 
@@ -66,6 +70,7 @@ def get_or_create_group_id(name, user_id):
         group = ServerGroup()
         group.name = name
         group.user_id = user_id
+        print("Created server group %s for user id %d" % (name, user_id))
         db.session.add(group)
 
         try:
@@ -103,6 +108,8 @@ def add_relationships():
                 server = Server()
                 server.name = name
                 server.group_id = group_id
+                server.user_id = user_id
+                print("Created server %s in group %s for user id %d" % (name, group, user_id))
                 db.session.add(server)
 
             for key, value in rel.items():
