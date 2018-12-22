@@ -45,7 +45,7 @@ def get_relationships():
                     "Port": node["port"],
                     "Username": node["username"],
                     "Password": node["password"],
-                    "SSLMode": "Prefer",
+                    "SSLMode": "prefer",
                     "MaintenanceDB": "postgres",
                     "Role": node["path"],
                 }
@@ -64,6 +64,7 @@ def add_relationships():
             raise RuntimeError(
                 "The specified user ID ({}) could not be found.".format(userid)
             )
+        user_id = user.id
 
         rels = list(get_relationships())
         groups = ServerGroup.query.all()
@@ -78,7 +79,7 @@ def add_relationships():
             if group_id == -1:
                 new_group = ServerGroup()
                 new_group.name = rel["Group"]
-                new_group.user_id = userid
+                new_group.user_id = user_id
                 db.session.add(new_group)
 
                 try:
@@ -92,7 +93,7 @@ def add_relationships():
             new_server = Server()
             new_server.name = rel["Name"]
             new_server.servergroup_id = group_id
-            new_server.user_id = userid
+            new_server.user_id = user_id
             new_server.host = rel["Host"]
             new_server.port = rel["Port"]
             new_server.maintenance_db = rel["MaintenanceDB"]
