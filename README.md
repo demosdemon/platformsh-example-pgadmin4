@@ -38,12 +38,12 @@ Creating variable env:GUNICORN_THREADS on the environment master
 ...
 ```
 
-### `PGADMIN4_SUPPORT_SSH_TUNNEL`
+### `PGADMIN_SUPPORT_SSH_TUNNEL`
 
 An optional value controlling whether or not to enable output ssh tunnels. If not provided, defaults to `false`.
 
 ```sh
-$ platform variable:create --level environment --name env:PGADMIN4_SUPPORT_SSH_TUNNEL --value true --no-wait --yes
-Creating variable env:PGADMIN4_SUPPORT_SSH_TUNNEL on the environment master
+$ platform variable:create --level environment --name env:PGADMIN_SUPPORT_SSH_TUNNEL --value true --no-wait --yes
+Creating variable env:PGADMIN_SUPPORT_SSH_TUNNEL on the environment master
 ...
 ```

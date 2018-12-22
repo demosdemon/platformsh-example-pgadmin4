@@ -18,7 +18,7 @@ UPGRADE_CHECK_ENABLED = True
 #: is not necessary to connect to platform.sh databases within the same cluster,
 #: however SSH tunneling may be used to connect to database instances in other
 #: clusters via the application host
-SUPPORT_SSH_TUNNEL = env("PGADMIN4_SUPPORT_SSH_TUNNEL", "false").lower() == "true"
+SUPPORT_SSH_TUNNEL = env("PGADMIN_SUPPORT_SSH_TUNNEL", "false").lower() == "true"
 
 
 def platform_settings():
