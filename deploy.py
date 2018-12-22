@@ -90,11 +90,10 @@ def create_or_update_server(user, server_dict):
     password = server_dict.pop("password")
     group_id = get_or_create_group_id(group, user.id)
 
-    server = Server.query.filter_by(
-        user_id=user.id, servergroup_id=group_id, name=name
-    ).first()
+    base = {"user_id": user.id, "servergroup_id": group_id, "name": name}
+    server = Server.query.filter_by(**base).first()
     if server is None:
-        server = Server(name=name, servergroup_id=group_id, user_id=user.id)
+        server = Server(**base)
         print(
             "Created server {!r} in group {!r} for user {!r}".format(
                 name, group, user.email
