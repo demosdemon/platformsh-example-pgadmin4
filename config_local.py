@@ -73,3 +73,6 @@ if platform_smtp_host:
 
 CONSOLE_LOG_LEVEL = logging.WARNING
 FILE_LOG_LEVEL = logging.DEBUG
+
+# Disable version checking
+UPGRADE_CHECK_ENABLED = True
