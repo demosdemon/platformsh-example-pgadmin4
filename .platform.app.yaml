@@ -36,18 +36,22 @@ web:
       passthru: true
 
 # The size of the persistent disk of the application (in MB).
-# Minimum is 256.
-disk: 512
+# Minimum is 128.
+disk: 128
 
 # Set a local R/W mount for pgAdmin4's appdata
 mounts:
   pgadmin-data:
-    source: local
-    source_path: pgadmin-data
+    source: service
+    service: ns
+    source_path: files/pgadmin-data
 
 # The hooks executed at various points in the lifecycle of the application
 hooks:
   # The build hook runs before the application is deployed, and is useful for
   # assembling the codebase.
   build: $PLATFORM_APP_DIR/.platform.build.sh
-  deploy: python $PLATFORM_APP_DIR/deploy.py
+  deploy: |
+    # copy from old local mount to network mount
+    if [ -f /mnt/pgadmin-data/pgadmin4.db -a ! -f /app/pgadmin-data/pgadmin4.db ]; then rsync -av /mnt/pgadmin-data/ /app/pgadmin-data/; fi
+    python $PLATFORM_APP_DIR/deploy.py
