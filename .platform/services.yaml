@@ -5,12 +5,6 @@
 #
 # See https://docs.platform.sh/user_guide/reference/services-yaml.html
 
-# network storage (just cause)
-# See https://docs.platform.sh/configuration/services/network-storage.html
-ns:
-  type: network-storage
-  disk: 1024
-
 # Our postgresql instance for pgAdmin4 to discover
 pgdata:
   type: postgresql:9.6
