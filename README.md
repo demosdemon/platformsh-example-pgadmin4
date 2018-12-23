@@ -6,23 +6,23 @@ This project provides a starting point for hosting [pgAdmin4](https://github.com
 
 The project requires the following variables in the environment:
 
-### `PGADMIN_SETUP_EMAIL`
+### `PGADMIN_DEFAULT_EMAIL`
 
-The email of the default pgadmin user. The variable is required for every deploy.
+The email of the default pgadmin user. The variable is required for every deploy as it is used to control which user automatically receives the discovered servers.
 
 ```sh
-$ platform variable:create --level environment --name env:PGADMIN_SETUP_EMAIL --value brandon@leblanc.codes --no-wait --yes
-Creating variable env:PGADMIN_SETUP_EMAIL on the environment master
+$ platform variable:create --level environment --name env:PGADMIN_DEFAULT_EMAIL --value brandon@leblanc.codes --no-wait --yes
+Creating variable env:PGADMIN_DEFAULT_EMAIL on the environment master
 ...
 ```
 
-### `PGADMIN_SETUP_PASSWORD`
+### `PGADMIN_DEFAULT_PASSWORD`
 
 The password of the default pgadmin user. Note that the variable is only necessary to initialize the database. The password may (and should) be changed via the UI afterwards. If a password is not provided, a random password is generated. The generated password will be printed in the deploy log; however, you should instead just use the forgot password feature and change it immediately.
 
 ```sh
-$ platform variable:create --level environment --name env:PGADMIN_SETUP_PASSWORD --value AezMm7U9sAfULzq --sensitive=true --no-wait --yes
-Creating variable env:PGADMIN_SETUP_PASSWORD on the environment master
+$ platform variable:create --level environment --name env:PGADMIN_DEFAULT_PASSWORD --value AezMm7U9sAfULzq --sensitive=true --no-wait --yes
+Creating variable env:PGADMIN_DEFAULT_PASSWORD on the environment master
 ...
 ```
 
