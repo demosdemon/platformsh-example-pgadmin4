@@ -36,8 +36,8 @@ web:
       passthru: true
 
 # The size of the persistent disk of the application (in MB).
-# Minimum is 256.
-disk: 16
+# Minimum is 128.
+disk: 128
 
 # Set a local R/W mount for pgAdmin4's appdata
 mounts:
