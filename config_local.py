@@ -27,6 +27,12 @@ def platform_settings():
     platform_project = env("PLATFORM_PROJECT")
     platform_smtp_host = env("PLATFORM_SMTP_HOST")
 
+    default_email = env("PGADMIN_SETUP_EMAIL") or env("PGADMIN_DEFAULT_EMAIL")
+    if default_email is None:
+        raise RuntimeError("The PGADMIN_DEFAULT_EMAIL environment variable must be set.")
+    os.environ["PGADMIN_SETUP_EMAIL"] = default_email
+    os.environ["PGADMIN_DEFAULT_EMAIL"] = default_email
+
     # Only set pgAdmin4 settings if we are within a Platform.sh environment.
     if not platform_project:
         return
