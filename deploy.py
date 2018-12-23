@@ -35,6 +35,12 @@ def init_db(app):
 
 
 def setup_db():
+    if env("PLATFORM_BRANCH") != "master" and SCHEMA_VERSION == 21:
+        # temporary hack to get around undeveloped migrations
+        if os.path.exists(SQLITE_PATH) and not os.path.exists(SQLITE_PATH + ".bak"):
+            print("Backing up master data.")
+            os.rename(SQLITE_PATH, SQLITE_PATH + "*.bak")
+
     app = create_app()
 
     with app.app_context():
