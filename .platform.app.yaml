@@ -37,7 +37,7 @@ web:
 
 # The size of the persistent disk of the application (in MB).
 # Minimum is 256.
-disk: 512
+disk: 16
 
 # Set a local R/W mount for pgAdmin4's appdata
 mounts:
