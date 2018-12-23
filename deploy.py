@@ -6,8 +6,8 @@ import os
 
 from config import SQLITE_PATH
 from pgadmin import create_app
-from pgadmin.model import SCHEMA_VERSION, Server, ServerGroup, User, Version, db
-from pgadmin.setup import db_upgrade
+from pgadmin.model import SCHEMA_VERSION, Server, ServerGroup, User, db
+from pgadmin.setup import db_upgrade, get_version, set_version
 from pgadmin.utils.crypto import encrypt
 from psh import env
 
@@ -38,26 +38,24 @@ def setup_db():
     app = create_app()
 
     with app.app_context():
+        if os.path.exists(SQLITE_PATH) and get_version() == -1:
+            print(
+                "Error fetching database version. Prior initialization must have been aborted. Trying again."
+            )
+            os.unlink(SQLITE_PATH)
+
         if not os.path.exists(SQLITE_PATH):
             init_db(app)
         else:
-            version = Version.query.filter_by(name="ConfigDB").first()
-            if version is None:
-                print("Error fetching database version. Removing database.")
-                os.unlink(SQLITE_PATH)
-                init_db(app)
-            else:
-                schema_version = version.value
+            schema_version = get_version()
+            if SCHEMA_VERSION >= schema_version:
+                print("Upgrading database schema.")
+                db_upgrade(app)
 
-                if SCHEMA_VERSION >= schema_version:
-                    print("Upgrading database schema.")
-                    db_upgrade(app)
-
-                if SCHEMA_VERSION > schema_version:
-                    version = Version.query.filter_by(name="ConfigDB").first()
-                    version.value = SCHEMA_VERSION
-                    print("Saving database schema version.")
-                    commit("Error saving database schema version")
+            if SCHEMA_VERSION > schema_version:
+                set_version(SCHEMA_VERSION)
+                print("Saving database schema version.")
+                commit("Error saving database schema version")
 
 
 def get_relationships():
